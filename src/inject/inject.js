@@ -1,4 +1,5 @@
 console.log("running battrick bidder");
+// battrick page
 
 chrome.extension.sendMessage({}, function (response) {
 	var readyStateCheckInterval = setInterval(function () {
@@ -24,6 +25,7 @@ chrome.extension.sendMessage({}, function (response) {
 chrome.extension.onMessage.addListener(
 	function (request, sender, sendResponse) {
 		console.log("got a message:", request);
+		sendResponse(request);
 		//   sendResponse({ player: request.player + " is a great guy" });
 
 	});

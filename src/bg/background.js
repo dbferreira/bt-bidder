@@ -12,9 +12,15 @@ chrome.extension.onMessage.addListener(
   function (request, sender, sendResponse) {
     if (request.player) {
       chrome.pageAction.show(sender.tab.id);
-      sendResponse({ player: request.player + " is a great guy" });
+      chrome.tabs.getSelected(null, function (tab) {
+        const tabTitle = tab.title;
+        chrome.storage.sync.get(tabTitle, function (items) {
+          console.log("Found saved items:", items);
+          sendResponse({ player: items });
+        });
+      });
     }
-    sendResponse();
+    sendResponse(request);
   });
 
 // chrome.storage.sync.set({ "yourBody": "myBody" }, function () {
