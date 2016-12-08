@@ -20,3 +20,10 @@ chrome.extension.sendMessage({}, function (response) {
 		}
 	}, 10);
 });
+
+chrome.extension.onMessage.addListener(
+	function (request, sender, sendResponse) {
+		console.log("got a message:", request);
+		//   sendResponse({ player: request.player + " is a great guy" });
+
+	});

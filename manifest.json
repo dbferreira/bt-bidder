@@ -20,6 +20,8 @@
     "default_popup": "src/page_action/page_action.html"
   },
   "permissions": [
+    "storage",
+    "tabs",
     "http://battrick.org/*"
   ],
   "content_scripts": [
