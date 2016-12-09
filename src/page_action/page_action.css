@@ -29,7 +29,7 @@ html{
     font-size: 18px;
     padding: 0 0 12px 0;
     margin: 0;
-    border-bottom: 2px solid #6CAEE0;
+    border-bottom: 2px solid #888888;
 }
 
 .form-labels-on-top .form-row > label span{
@@ -94,6 +94,11 @@ button.enable {
     background-color: #6fca64;
 }
 
+#running-indicator {
+    height: 40px;
+    width: 40px;
+    background-size: contain;
+}
 
 /*	Making the form responsive. Remove this media query
     if you don't need the form to work on mobile devices. */
