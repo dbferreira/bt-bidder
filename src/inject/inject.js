@@ -4,7 +4,6 @@ function setRefresh(items, tabTitle) {
     var timeoutHandler = setTimeout(function () {
         location.reload();
     }, +items[tabTitle].refreshInterval * 1000);
-    console.log("Setting new timeoutHandler", timeoutHandler);
     items[tabTitle]["timeoutHandler"] = timeoutHandler;
     chrome.storage.sync.set(items, function () { });
 }
@@ -20,6 +19,7 @@ chrome.extension.sendMessage({}, function (response) {
                     var myUserName = $("span.dispname").text();
                     var playerName = $("div#playerdetails > h2").text();
                     var currentBid = 0;
+                    var askingPrice = 0;
                     var buyerName = "";
 
                     var form = $("div.menuitem > form").html();
@@ -31,18 +31,21 @@ chrome.extension.sendMessage({}, function (response) {
                         buyerName = buyerStr.slice(0, buyerStr.indexOf("<"));
                     }
 
+                    var aPriceID = form.indexOf("Asking Price: £");
+                    var aPriceStr = form.slice(aPriceID + 15);
+                    askingPrice = +aPriceStr.slice(0, aPriceStr.indexOf("<br>")).replace(",", "");
+
                     // Enable the plugin icon
                     chrome.runtime.sendMessage({ bidInfo: "enable" }, function (response) { });
 
                     if (items[tabTitle]) {
-                        console.log("Got some items just after page load:", items);
-                        // clearTimeout(items[tabTitle]["timeoutHandler"]);
                         var maxBid = +items[tabTitle]["maxBid"];
-                        console.log("maxBid", maxBid);
-                        console.log("currentBid", currentBid);
                         if (myUserName !== buyerName) { // Only bid if I'm not already the highest bidder
-                            console.log("i'm not the bidder");
-                            if (maxBid > currentBid) { // Still within my specified price, click that button
+                            if (currentBid === 0) {
+                                if (askingPrice < maxBid) // Do not place initial bid if offer is lower than asking price
+                                    submitButton.click();
+                            }
+                            else if (maxBid > currentBid) { // Still within my specified price, click that button
                                 submitButton.click();
                             }
                         }
@@ -52,15 +55,12 @@ chrome.extension.sendMessage({}, function (response) {
                 }
                 else if (items[tabTitle])
                     chrome.storage.sync.remove([tabTitle], function () { });
-                if (items[tabTitle])
-                    console.log("items[tabTitle][\"timeoutHandler\"]", items[tabTitle]["timeoutHandler"]);
             });
         }
     }, 10);
 });
 
 function startBidding(request, sendResponse) {
-    console.log("Start request:", request);
     var tabTitle = $(document).attr('title');
     chrome.storage.sync.get(tabTitle, function (items) {
         items[tabTitle]["started"] = true;
@@ -70,22 +70,17 @@ function startBidding(request, sendResponse) {
 }
 
 function stopBidding(request, sendResponse) {
-    console.log("Stop request:", request);
     var tabTitle = $(document).attr('title');
-
-    // Clear timeouts
     chrome.storage.sync.get(tabTitle, function (items) {
-        console.log("Stopping timeout handler:", items[tabTitle]["timeoutHandler"]);
         clearTimeout(+items[tabTitle]["timeoutHandler"]);
         sendResponse("stopped");
     });
-    
+
     chrome.storage.sync.remove([tabTitle], function () { });
 }
 
 chrome.extension.onMessage.addListener(
     function (request, sender, sendResponse) {
-        console.log("got a message:", request);
         if (request.start)
             startBidding(request.start, sendResponse);
         else if (request.stop)

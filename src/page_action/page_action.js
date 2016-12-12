@@ -13,8 +13,6 @@ function startBidding(ev) {
     maxInput.readOnly = true;
     refreshInput.readOnly = true;
     runningIndicator.style.display = 'inline';
-    window.close();
-
     chrome.tabs.getSelected(null, function (tab) {
         const tabTitle = tab.title;
         const startMessage = {
@@ -24,30 +22,24 @@ function startBidding(ev) {
             maxBid: document.getElementById('max').value
         };
         chrome.storage.sync.set({ [tabTitle]: startMessage }, function () { });
-        chrome.tabs.sendMessage(tab.id, { start: startMessage }, undefined, function (response) {
-            console.log(response);
-        });
+        chrome.tabs.sendMessage(tab.id, { start: startMessage }, undefined, function (response) { });
     });
 }
 
 function stopBidding(ev) {
-    window.close();
     enableButton.disabled = false;
     disableButton.disabled = true;
     maxInput.readOnly = false;
     refreshInput.readOnly = false;
     runningIndicator.style.display = 'none';
     chrome.tabs.getSelected(null, function (tab) {
-        chrome.tabs.sendMessage(tab.id, { stop: "true" }, undefined, function (response) {
-            console.log(response);
-        });
+        chrome.tabs.sendMessage(tab.id, { stop: "true" }, undefined, function (response) { });
     });
 }
 
 chrome.tabs.getSelected(null, function (tab) {
     const tabTitle = tab.title;
     chrome.storage.sync.get(tabTitle, function (items) {
-        console.log("Found historical data:", items);
         var started = false;
         if (items[tabTitle]) {
             started = items[tabTitle].started;
