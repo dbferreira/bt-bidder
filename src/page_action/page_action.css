@@ -81,7 +81,7 @@ html{
 
 .form-labels-on-top button{
     border-radius: 2px;
-    background-color: #a7a7a7;
+    background-color: #eb5f5f;
     color: #ffffff;
     font-weight: bold;
     box-shadow: 1px 2px 4px 0 rgba(0, 0, 0, 0.08);
@@ -90,8 +90,17 @@ html{
     margin-top: 15px;
 }
 
+button:hover  {
+    cursor: pointer; 
+}
+
 button.enable {
     background-color: #6fca64;
+}
+
+button:disabled {
+    background-color: #c3c3c3;
+    cursor: default;
 }
 
 #running-indicator {

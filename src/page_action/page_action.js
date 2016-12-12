@@ -10,6 +10,8 @@ disableButton.addEventListener('click', stopBidding);
 function startBidding(ev) {
     enableButton.disabled = true;
     disableButton.disabled = false;
+    maxInput.readOnly = true;
+    refreshInput.readOnly = true;
     runningIndicator.style.display = 'inline';
     window.close();
 
@@ -32,11 +34,11 @@ function stopBidding(ev) {
     window.close();
     enableButton.disabled = false;
     disableButton.disabled = true;
+    maxInput.readOnly = false;
+    refreshInput.readOnly = false;
     runningIndicator.style.display = 'none';
     chrome.tabs.getSelected(null, function (tab) {
-        const tabTitle = tab.title;
-        chrome.storage.sync.remove([tabTitle], function () { });
-        chrome.tabs.sendMessage(tab.id, { stop: "" }, undefined, function (response) {
+        chrome.tabs.sendMessage(tab.id, { stop: "true" }, undefined, function (response) {
             console.log(response);
         });
     });
@@ -56,14 +58,15 @@ chrome.tabs.getSelected(null, function (tab) {
         if (started) {
             enableButton.disabled = true;
             disableButton.disabled = false;
+            maxInput.readOnly = true;
+            refreshInput.readOnly = true;
             runningIndicator.style.display = 'inline';
-            // chrome.tabs.sendMessage(tab.id, { continue: "" }, undefined, function (response) {
-            //     console.log("Continue response:", response);
-            // })
         }
         else {
             enableButton.disabled = false;
             disableButton.disabled = true;
+            maxInput.readOnly = false;
+            refreshInput.readOnly = false;
             runningIndicator.style.display = 'none';
         }
 

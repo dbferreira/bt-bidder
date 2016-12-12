@@ -4,6 +4,7 @@ function setRefresh(items, tabTitle) {
     var timeoutHandler = setTimeout(function () {
         location.reload();
     }, +items[tabTitle].refreshInterval * 1000);
+    console.log("Setting new timeoutHandler", timeoutHandler);
     items[tabTitle]["timeoutHandler"] = timeoutHandler;
     chrome.storage.sync.set(items, function () { });
 }
@@ -51,7 +52,8 @@ chrome.extension.sendMessage({}, function (response) {
                 }
                 else if (items[tabTitle])
                     chrome.storage.sync.remove([tabTitle], function () { });
-
+                if (items[tabTitle])
+                    console.log("items[tabTitle][\"timeoutHandler\"]", items[tabTitle]["timeoutHandler"]);
             });
         }
     }, 10);
@@ -73,9 +75,12 @@ function stopBidding(request, sendResponse) {
 
     // Clear timeouts
     chrome.storage.sync.get(tabTitle, function (items) {
-        clearTimeout(items[tabTitle]["timeoutHandler"]);
+        console.log("Stopping timeout handler:", items[tabTitle]["timeoutHandler"]);
+        clearTimeout(+items[tabTitle]["timeoutHandler"]);
         sendResponse("stopped");
     });
+    
+    chrome.storage.sync.remove([tabTitle], function () { });
 }
 
 chrome.extension.onMessage.addListener(
