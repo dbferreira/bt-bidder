@@ -2,7 +2,7 @@
   "name": "Battrick Bidder",
   "version": "0.0.1",
   "manifest_version": 2,
-  "description": "This saves me time to automatically bid on players",
+  "description": "Automatically refresh and bids on Battrick players within specified parameters",
   "homepage_url": "http://battrick.org",
   "icons": {
     "16": "icons/icon16.png",
